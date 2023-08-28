@@ -20,6 +20,8 @@ public class TimeWheel {
         float speed;
         int round;
 
+        Position position;
+
         public void roundNext() {
             this.round++;
         }
@@ -50,16 +52,18 @@ public class TimeWheel {
 
      */
     public static void main(String[] args) {
-        Runner a = new Runner("A", 120, 1);
-        Runner b = new Runner("B", 150, 1);
-        Runner c = new Runner("C", 200, 1);
+        Runner a = new Runner("A", 120, 1, Position.ONE);
+        Runner b = new Runner("B", 150, 1, Position.TWO);
+        Runner c = new Runner("C", 200, 1, Position.THREE);
+        Runner d = new Runner("D", 150, 1, Position.FOUR);
+        Runner e = new Runner("E", 100, 1, Position.FIVE);
 
-        Runner i = new Runner("I", 100, 1);
+        Runner z = new Runner("Z", 100, 1, Position.Z);
 
         int totalRound = 4;
-        System.out.printf("Round %s begin: %n", i.getRound());
-        while (i.round <= totalRound) {
-            Runner theOne = Stream.of(a, b, c, i).min((me, others) -> {
+        System.out.printf("Round %s begin: %n", z.getRound());
+        while (z.round <= totalRound) {
+            Runner theOne = Stream.of(a, b, c, d, e, z).min((me, others) -> {
                 float myLen = length * me.round;
                 float othersLen = length * others.round;
                 if (myLen / me.speed > othersLen / others.speed) {
@@ -67,17 +71,22 @@ public class TimeWheel {
                 } else if (myLen / me.speed < othersLen / others.speed) {
                     return -1;
                 }
-                // todo: if speed is the same, compare with position
-                //  (i is at position 99)
+                // if speed is the same, compare with position
+                if (me.position.num < others.position.num) {
+                    return -1;
+                } else if (me.position.num > others.position.num) {
+                    return 1;
+                }
                 return 0;
             }).get();
 
-            System.out.println(theOne);
+            System.out.print(theOne);
+            System.out.printf("\t%s %n", length*theOne.round/theOne.speed);
             theOne.roundNext();
 
-            if (theOne.getName().equals("I")) {
+            if (theOne.getName().equals("Z")) {
                 System.out.printf("Round %s end. %n", theOne.getRound()-1);
-                if (i.round <= totalRound) {
+                if (z.round <= totalRound) {
                     System.out.printf("Round %s begin: %n", theOne.getRound());
                 }
             }
